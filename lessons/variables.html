@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Variables · App Inventor Class Notes</title>
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body data-root="../" data-page="lesson" data-lesson="variables">
+  <header id="site-header"></header>
+
+  <div class="page with-sidebar">
+    <aside id="sidebar"></aside>
+
+    <main class="content">
+      <h1>Variables</h1>
+      <p class="lead">A variable is how your app <strong>remembers</strong> something.</p>
+
+      <h2>What is a variable?</h2>
+      <p>Think of a variable as a <strong>box with a label on it</strong>. The label is the variable's
+        <em>name</em>, and the thing inside the box is its <em>value</em>. Your app can look inside the box
+        at any time, and it can swap the content for something new.</p>
+      <p>Without variables an app forgets everything immediately. A game could not keep the score, a quiz
+        could not count correct answers, and a login screen could not remember who you are.</p>
+
+      <div class="table-wrap">
+        <table>
+          <tr><th>Name (the label)</th><th>Value (inside the box)</th><th>Used for</th></tr>
+          <tr><td><code>score</code></td><td>0</td><td>Points in a game</td></tr>
+          <tr><td><code>playerName</code></td><td>"Rina"</td><td>Greeting the player</td></tr>
+          <tr><td><code>isGameOver</code></td><td>false</td><td>Knowing when to stop the game</td></tr>
+        </table>
+      </div>
+
+      <h2>Where to find the blocks</h2>
+      <p>Open the <strong>Blocks</strong> view, then click <strong>Built-in → Variables</strong>. All variable
+        blocks are <strong>orange</strong>.</p>
+
+      <h2>The three things you do with a variable</h2>
+
+      <h3>1. Create it (initialize)</h3>
+      <p>This block creates the box, gives it a name and puts a first value inside. Click the word
+        <code>name</code> on the block and type your own name.</p>
+      <div class="blocks">
+        <div class="blk var">initialize global <span class="field">score</span> to <span class="blk math">0</span></div>
+      </div>
+      <p>This block stands <strong>alone</strong> on the workspace. It does not go inside any other block.</p>
+
+      <h3>2. Read it (get)</h3>
+      <p>The <code>get</code> block looks inside the box and gives you the value. It does not change anything.</p>
+      <div class="blocks">
+        <div class="blk var">get <span class="field">global score</span></div>
+      </div>
+
+      <h3>3. Change it (set)</h3>
+      <p>The <code>set</code> block throws away the old value and puts a new one in the box.</p>
+      <div class="blocks">
+        <div class="blk var">set <span class="field">global score</span> to <span class="blk math">10</span></div>
+      </div>
+
+      <div class="note">
+        <p><strong>Shortcut:</strong> hover your mouse over the variable's name in the
+          <code>initialize</code> block. The matching <code>get</code> and <code>set</code> blocks pop up,
+          ready to drag.</p>
+      </div>
+
+      <h2>Types of values</h2>
+      <p>A variable can hold different kinds of values. The colour of the block tells you the type.</p>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Type</th><th>Example</th><th>Drawer</th><th>Block</th></tr>
+          <tr>
+            <td>Number</td><td>0, 75, 3.14</td><td>Math (blue)</td>
+            <td><span class="blk math">75</span></td>
+          </tr>
+          <tr>
+            <td>Text</td><td>"Hello", "Rina"</td><td>Text (pink)</td>
+            <td><span class="blk text">" Hello "</span></td>
+          </tr>
+          <tr>
+            <td>Boolean</td><td>true or false</td><td>Logic (green)</td>
+            <td><span class="blk logic">true</span></td>
+          </tr>
+          <tr>
+            <td>List</td><td>several values together</td><td>Lists (light blue)</td>
+            <td class="muted">We will learn this later.</td>
+          </tr>
+        </table>
+      </div>
+
+      <h2>Example: a score counter</h2>
+      <p>The app has one button and one label. Every time the button is clicked, the score goes up by 1 and
+        the label shows the new score.</p>
+      <div class="blocks">
+        <div class="blk var">initialize global <span class="field">score</span> to <span class="blk math">0</span></div>
+
+        <div class="blk evt c">
+          <div class="row">when <span class="field">Button1</span> .Click</div>
+          <div class="arm">
+            <span class="kw">do</span>
+            <div class="stack">
+              <div class="blk var">set <span class="field">global score</span> to
+                <span class="blk math"><span class="blk var">get <span class="field">global score</span></span> + <span class="blk math">1</span></span>
+              </div>
+              <div class="blk set">set <span class="field">Label1</span> . <span class="field">Text</span> to
+                <span class="blk text">join <span class="blk text">" Score: "</span> <span class="blk var">get <span class="field">global score</span></span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p>Read the first line inside the button like this: <em>“take the current score, add 1, and store the
+        result back in score.”</em> Here is what happens when the button is clicked three times:</p>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Moment</th><th>Value of score</th><th>Label shows</th></tr>
+          <tr><td>App starts</td><td>0</td><td>(nothing yet)</td></tr>
+          <tr><td>1st click</td><td>1</td><td>Score: 1</td></tr>
+          <tr><td>2nd click</td><td>2</td><td>Score: 2</td></tr>
+          <tr><td>3rd click</td><td>3</td><td>Score: 3</td></tr>
+        </table>
+      </div>
+
+      <h2>Global and local variables</h2>
+      <div class="table-wrap">
+        <table>
+          <tr><th></th><th>Global</th><th>Local</th></tr>
+          <tr>
+            <td><strong>Where it works</strong></td>
+            <td>Everywhere on the screen: in every event and every procedure.</td>
+            <td>Only inside the block where it was created.</td>
+          </tr>
+          <tr>
+            <td><strong>How long it lives</strong></td>
+            <td>As long as the screen is open.</td>
+            <td>Only while that block is running.</td>
+          </tr>
+          <tr>
+            <td><strong>Use it for</strong></td>
+            <td>Things the whole app must remember, like the score.</td>
+            <td>A temporary value for one small calculation.</td>
+          </tr>
+        </table>
+      </div>
+      <p>A local variable looks like this. The name <code>total</code> can only be used inside the
+        <code>in</code> part:</p>
+      <div class="blocks">
+        <div class="blk var c">
+          <div class="row">initialize local <span class="field">total</span> to
+            <span class="blk math"><span class="blk math">80</span> + <span class="blk math">90</span></span>
+          </div>
+          <div class="arm">
+            <span class="kw">in</span>
+            <div class="stack">
+              <div class="blk set">set <span class="field">Label1</span> . <span class="field">Text</span> to
+                <span class="blk var">get <span class="field">total</span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h2>Rules for good names</h2>
+      <ul>
+        <li>Use a name that says what is inside: <code>score</code> is better than <code>x</code>.</li>
+        <li>No spaces. Write <code>playerName</code> or <code>player_name</code>.</li>
+        <li>Start with a letter, not a number.</li>
+        <li>Every global variable needs a different name.</li>
+      </ul>
+
+      <h2>Common mistakes</h2>
+      <div class="warn">
+        <ul>
+          <li><strong>Putting <code>initialize global</code> inside an event.</strong> It must stand alone on
+            the workspace.</li>
+          <li><strong>Forgetting to update the label.</strong> Changing a variable does not change the screen.
+            You must also set the label's text.</li>
+          <li><strong>Using <code>set score to 1</code> instead of <code>set score to score + 1</code>.</strong>
+            The first one always makes the score 1. The second one adds 1.</li>
+          <li><strong>Mixing up text and numbers.</strong> The text block <code>"abc"</code> cannot be used in a
+            calculation.</li>
+        </ul>
+      </div>
+
+      <h2>Check your understanding</h2>
+      <details>
+        <summary>1. What is the difference between <code>get</code> and <code>set</code>?</summary>
+        <p><code>get</code> only reads the value. <code>set</code> replaces the value with a new one.</p>
+      </details>
+      <details>
+        <summary>2. <code>score</code> is 5. The app runs <code>set score to score + 2</code> two times. What is the value now?</summary>
+        <p>9. First 5 + 2 = 7, then 7 + 2 = 9.</p>
+      </details>
+      <details>
+        <summary>3. You need the player's score on every button of the screen. Global or local?</summary>
+        <p>Global, because many different events need to use it.</p>
+      </details>
+      <details>
+        <summary>4. Which type of value would you use to store whether the sound is on or off?</summary>
+        <p>A boolean: <code>true</code> for on and <code>false</code> for off.</p>
+      </details>
+
+      <h2>Try it yourself</h2>
+      <ol>
+        <li>Build the score counter from the example above.</li>
+        <li>Add a second button that makes the score go <strong>down</strong> by 1.</li>
+        <li>Add a <strong>Reset</strong> button that sets the score back to 0.</li>
+      </ol>
+
+      <nav id="pager"></nav>
+    </main>
+  </div>
+
+  <footer class="site-footer">Grade 10 · MIT App Inventor</footer>
+
+  <script src="../data/lessons.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

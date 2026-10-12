@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>If – Else · App Inventor Class Notes</title>
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body data-root="../" data-page="lesson" data-lesson="if-else">
+  <header id="site-header"></header>
+
+  <div class="page with-sidebar">
+    <aside id="sidebar"></aside>
+
+    <main class="content">
+      <h1>If – Else</h1>
+      <p class="lead">If – else is how your app <strong>makes a decision</strong>.</p>
+
+      <h2>What is a decision?</h2>
+      <p>You make decisions all day: <em>“<strong>If</strong> it is raining, I bring an umbrella.
+        <strong>Else</strong>, I leave it at home.”</em> An app does the same thing. It asks a yes-or-no
+        question, then chooses which blocks to run.</p>
+      <ul>
+        <li><strong>If</strong> the password is correct, open the next screen. <strong>Else</strong>, show “Wrong password”.</li>
+        <li><strong>If</strong> the score is 75 or more, show “Passed”. <strong>Else</strong>, show “Try again”.</li>
+      </ul>
+
+      <h2>Conditions: the yes-or-no question</h2>
+      <p>The question is called a <strong>condition</strong>. Its answer is always a boolean:
+        <code>true</code> or <code>false</code>. You build conditions with these blocks:</p>
+
+      <h3>Comparing numbers (Math drawer)</h3>
+      <div class="blocks">
+        <div class="blk math"><span class="blk var">get <span class="field">global score</span></span> <span class="field">≥</span> <span class="blk math">75</span></div>
+      </div>
+      <p>Click the small arrow in the middle of the block to choose the comparison:</p>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Symbol</th><th>Meaning</th><th>Example</th><th>Answer</th></tr>
+          <tr><td>=</td><td>equal to</td><td>5 = 5</td><td>true</td></tr>
+          <tr><td>≠</td><td>not equal to</td><td>5 ≠ 5</td><td>false</td></tr>
+          <tr><td>&lt;</td><td>less than</td><td>3 &lt; 5</td><td>true</td></tr>
+          <tr><td>≤</td><td>less than or equal to</td><td>5 ≤ 5</td><td>true</td></tr>
+          <tr><td>&gt;</td><td>greater than</td><td>3 &gt; 5</td><td>false</td></tr>
+          <tr><td>≥</td><td>greater than or equal to</td><td>7 ≥ 5</td><td>true</td></tr>
+        </table>
+      </div>
+
+      <h3>Comparing text (Text drawer)</h3>
+      <div class="blocks">
+        <div class="blk text">compare texts <span class="blk get"><span class="field">TextBox1</span> . <span class="field">Text</span></span> <span class="field">=</span> <span class="blk text">" abc123 "</span></div>
+      </div>
+
+      <h3>Combining conditions (Logic drawer)</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Block</th><th>It is true when…</th></tr>
+          <tr><td><span class="blk logic">… and …</span></td><td><strong>both</strong> sides are true</td></tr>
+          <tr><td><span class="blk logic">… or …</span></td><td><strong>at least one</strong> side is true</td></tr>
+          <tr><td><span class="blk logic">not …</span></td><td>the condition is <strong>false</strong> (it flips the answer)</td></tr>
+        </table>
+      </div>
+
+      <h2>Where to find the blocks</h2>
+      <p>Open the <strong>Blocks</strong> view, then click <strong>Built-in → Control</strong>. The
+        <code>if – then</code> block is at the top. Control blocks are <strong>yellow-brown</strong>.</p>
+
+      <h2>1. If – then</h2>
+      <p>If the condition is true, the blocks inside <code>then</code> run. If it is false, they are skipped
+        and nothing happens.</p>
+      <div class="blocks">
+        <div class="blk ctrl c">
+          <div class="row">if <span class="blk math"><span class="blk var">get <span class="field">global score</span></span> <span class="field">≥</span> <span class="blk math">100</span></span></div>
+          <div class="arm">
+            <span class="kw">then</span>
+            <div class="stack">
+              <div class="blk set">set <span class="field">Label1</span> . <span class="field">Text</span> to <span class="blk text">" You win! "</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h2>2. If – then – else</h2>
+      <p>Now there are two paths. If the condition is true, the <code>then</code> part runs. If it is false,
+        the <code>else</code> part runs. <strong>Exactly one</strong> of them always runs.</p>
+
+      <div class="note">
+        <p><strong>How to add <code>else</code>:</strong> click the small <strong>blue gear</strong> on the
+          <code>if</code> block. A little window opens. Drag <code>else</code> (or <code>else if</code>)
+          under the <code>if</code> inside that window.</p>
+      </div>
+
+      <div class="blocks">
+        <div class="blk evt c">
+          <div class="row">when <span class="field">ButtonCheck</span> .Click</div>
+          <div class="arm">
+            <span class="kw">do</span>
+            <div class="stack">
+              <div class="blk ctrl c">
+                <div class="row">if <span class="blk math"><span class="blk get"><span class="field">TextBoxScore</span> . <span class="field">Text</span></span> <span class="field">≥</span> <span class="blk math">75</span></span></div>
+                <div class="arm">
+                  <span class="kw">then</span>
+                  <div class="stack">
+                    <div class="blk set">set <span class="field">LabelResult</span> . <span class="field">Text</span> to <span class="blk text">" Passed "</span></div>
+                  </div>
+                </div>
+                <div class="arm">
+                  <span class="kw">else</span>
+                  <div class="stack">
+                    <div class="blk set">set <span class="field">LabelResult</span> . <span class="field">Text</span> to <span class="blk text">" Try again "</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <tr><th>The user types</th><th>Is it ≥ 75?</th><th>Part that runs</th><th>Label shows</th></tr>
+          <tr><td>90</td><td>true</td><td>then</td><td>Passed</td></tr>
+          <tr><td>75</td><td>true</td><td>then</td><td>Passed</td></tr>
+          <tr><td>60</td><td>false</td><td>else</td><td>Try again</td></tr>
+        </table>
+      </div>
+
+      <h2>3. Else if: more than two choices</h2>
+      <p>When there are more than two possible results, add <code>else if</code> with the blue gear. The app
+        checks the conditions <strong>from top to bottom</strong> and runs only the <strong>first</strong> one
+        that is true. After that it skips all the rest.</p>
+      <div class="blocks">
+        <div class="blk ctrl c">
+          <div class="row">if <span class="blk math"><span class="blk var">get <span class="field">global score</span></span> <span class="field">≥</span> <span class="blk math">90</span></span></div>
+          <div class="arm">
+            <span class="kw">then</span>
+            <div class="stack">
+              <div class="blk set">set <span class="field">LabelGrade</span> . <span class="field">Text</span> to <span class="blk text">" A "</span></div>
+            </div>
+          </div>
+          <div class="row">else if <span class="blk math"><span class="blk var">get <span class="field">global score</span></span> <span class="field">≥</span> <span class="blk math">75</span></span></div>
+          <div class="arm">
+            <span class="kw">then</span>
+            <div class="stack">
+              <div class="blk set">set <span class="field">LabelGrade</span> . <span class="field">Text</span> to <span class="blk text">" B "</span></div>
+            </div>
+          </div>
+          <div class="arm">
+            <span class="kw">else</span>
+            <div class="stack">
+              <div class="blk set">set <span class="field">LabelGrade</span> . <span class="field">Text</span> to <span class="blk text">" C "</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <tr><th>score</th><th>≥ 90?</th><th>≥ 75?</th><th>Grade</th></tr>
+          <tr><td>95</td><td>true</td><td>(not checked)</td><td>A</td></tr>
+          <tr><td>80</td><td>false</td><td>true</td><td>B</td></tr>
+          <tr><td>50</td><td>false</td><td>false</td><td>C</td></tr>
+        </table>
+      </div>
+
+      <h2>Common mistakes</h2>
+      <div class="warn">
+        <ul>
+          <li><strong>Wrong order.</strong> If you check <code>≥ 75</code> before <code>≥ 90</code>, a score of
+            95 gets a B, because the first true condition wins. Check the strictest condition first.</li>
+          <li><strong>Using several separate <code>if</code> blocks instead of <code>else if</code>.</strong>
+            Separate <code>if</code> blocks are all checked, so more than one can run and the last one
+            overwrites the others.</li>
+          <li><strong>An empty socket.</strong> The <code>if</code> block needs a condition plugged in. An
+            empty socket shows a warning and the app will not work.</li>
+          <li><strong>Forgetting <code>else</code>.</strong> Without it, nothing happens when the condition is
+            false, and the user gets no feedback.</li>
+        </ul>
+      </div>
+
+      <h2>Check your understanding</h2>
+      <details>
+        <summary>1. What kind of value does a condition give?</summary>
+        <p>A boolean: <code>true</code> or <code>false</code>.</p>
+      </details>
+      <details>
+        <summary>2. In an <code>if – then – else</code> block, can both parts run in the same click?</summary>
+        <p>No. Exactly one part runs: <code>then</code> when the condition is true, <code>else</code> when it is false.</p>
+      </details>
+      <details>
+        <summary>3. <code>age</code> is 15. Is <code>age ≥ 13 and age &lt; 15</code> true or false?</summary>
+        <p>False. 15 ≥ 13 is true, but 15 &lt; 15 is false, and <code>and</code> needs both sides to be true.</p>
+      </details>
+      <details>
+        <summary>4. Using the grade example above, what grade does a score of 75 get?</summary>
+        <p>B. 75 ≥ 90 is false, then 75 ≥ 75 is true.</p>
+      </details>
+
+      <h2>Try it yourself</h2>
+      <ol>
+        <li><strong>Password checker:</strong> one text box and one button. If the text equals your secret
+          word, show “Welcome”. Else, show “Wrong password”.</li>
+        <li><strong>Odd or even:</strong> the user types a number. Show “Even” or “Odd”.
+          <span class="muted">Hint: look for the <code>modulo of</code> block in the Math drawer.</span></li>
+        <li><strong>Grades:</strong> extend the grade example so it also gives a D for scores below 60.</li>
+      </ol>
+
+      <nav id="pager"></nav>
+    </main>
+  </div>
+
+  <footer class="site-footer">Grade 10 · MIT App Inventor</footer>
+
+  <script src="../data/lessons.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>
