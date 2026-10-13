@@ -302,6 +302,29 @@ window.Store = (function () {
     return batch.commit();
   }
 
+  // Empties a class: every student, their passwords and all their quiz results.
+  function removeAllStudents(classId) {
+    return Promise.all([
+      classDoc(classId).collection('students').get(),
+      db.collection('attempts').where('classId', '==', classId).get()
+    ]).then(function (loaded) {
+      var refs = loaded[1].docs.map(function (doc) { return doc.ref; });
+      loaded[0].docs.forEach(function (doc) {
+        refs.push(doc.ref);
+        refs.push(classDoc(classId).collection('pins').doc(doc.id));
+        refs.push(classDoc(classId).collection('claimed').doc(doc.id));
+      });
+      // A batch holds at most 500 writes.
+      var batches = [];
+      for (var i = 0; i < refs.length; i += 400) {
+        var batch = db.batch();
+        refs.slice(i, i + 400).forEach(function (ref) { batch.delete(ref); });
+        batches.push(batch.commit());
+      }
+      return Promise.all(batches);
+    });
+  }
+
   // Deletes every attempt of one student for one lesson.
   function resetProgress(classId, studentId, lessonId) {
     return db.collection('attempts')
@@ -345,6 +368,7 @@ window.Store = (function () {
     saveClass: saveClass,
     addStudents: addStudents,
     removeStudent: removeStudent,
+    removeAllStudents: removeAllStudents,
     classAttempts: classAttempts
   };
 })();

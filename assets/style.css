@@ -474,3 +474,4 @@ table.dash tr.total td { background: var(--blocks-bg); font-weight: 600; }
   margin-bottom: 4px;
 }
 .next-lesson p { margin: 6px 0 14px; color: var(--muted); }
+.btn.danger { background: var(--bad); margin-bottom: 20px; }

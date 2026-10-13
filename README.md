@@ -70,6 +70,7 @@ This also works from the GitHub website: open the folder, choose **Add file → 
 
 - A student who changes device just logs in again with the same name and password; their results are still there.
 - **Let a student start a lesson again:** dashboard → **Overview** → **Reset** next to that lesson's score. This permanently deletes the student's results for that one lesson.
+- **Empty a class** (for example for a new school year): dashboard → **Class & roster** → **Remove all students**. This deletes the students, their passwords and all their quiz results.
 - **Forgotten password:** open the dashboard → **Class & roster** → **Reset password** next to the student. They choose a new password the next time they pick their name, and their quiz results are kept. Any browser still logged in as that student is logged out.
 - A name without a password can be claimed by anyone who knows the class code. Have students log in for the first time during class, and check the roster: every student should show "Password set".
 - Passwords are stored as a hash; nobody, including the teacher, can read them.

@@ -319,6 +319,12 @@
     return el('div', {}, [
       el('h2', { text: 'Roster (' + state.students.length + ' students)' }),
       rows.length ? el('div', { class: 'table-wrap' }, [el('table', { class: 'dash' }, rows)]) : el('p', { class: 'muted', text: 'No students yet.' }),
+      rows.length ? button('Remove all students', 'btn danger', function () {
+        var name = currentClass().name;
+        if (!window.confirm('Remove all ' + state.students.length + ' students from ' + name + '? This also deletes their passwords and ALL their quiz results. This cannot be undone.')) return;
+        show([el('p', { class: 'muted', text: 'Removing students…' })]);
+        Store.removeAllStudents(state.classId).then(reload, fail);
+      }) : null,
       add
     ]);
   }
