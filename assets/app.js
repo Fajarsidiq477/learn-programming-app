@@ -3,6 +3,7 @@
   var page = document.body.dataset.page || '';
   var lessonId = document.body.dataset.lesson || '';
   var lessons = window.LESSONS || [];
+  var Store = window.Store;
 
   function el(tag, attrs, children) {
     var node = document.createElement(tag);
@@ -42,16 +43,24 @@
 
   /* ---------- Header ---------- */
   var header = document.getElementById('site-header');
+  var nav, userBox;
   if (header) {
     var links = [
       { id: 'home', label: 'Lessons', href: 'index.html' },
       { id: 'tutorials', label: 'Tutorials', href: 'tutorials.html' },
-      { id: 'assignments', label: 'Assignments', href: 'assignments.html' }
+      { id: 'assignments', label: 'Assignments', href: 'assignments.html' },
+      { id: 'editor', label: 'App Inventor ↗', href: 'https://ai2.appinventor.mit.edu/' }
     ];
-    var nav = el('nav', { class: 'site-nav' }, links.map(function (link) {
+    nav = el('nav', { class: 'site-nav' }, links.map(function (link) {
       var active = link.id === page || (link.id === 'home' && page === 'lesson');
-      return el('a', { href: root + link.href, class: active ? 'active' : '', text: link.label });
+      var attrs = { href: resolve(link.href), class: active ? 'active' : '', text: link.label };
+      if (link.id === 'editor') {
+        attrs.target = '_blank';
+        attrs.rel = 'noopener';
+      }
+      return el('a', attrs);
     }));
+    userBox = el('div', { class: 'user-box' });
     var toggle = el('button', { class: 'theme-toggle', type: 'button', text: 'Light / Dark' });
     toggle.addEventListener('click', function () {
       var next = currentTheme() === 'dark' ? 'light' : 'dark';
@@ -62,20 +71,22 @@
     brand.appendChild(document.createTextNode('App Inventor '));
     brand.appendChild(el('span', { text: 'Class Notes' }));
     header.className = 'site-header';
-    header.appendChild(el('div', { class: 'inner' }, [brand, nav, toggle]));
+    header.appendChild(el('div', { class: 'inner' }, [brand, nav, userBox, toggle]));
   }
 
   /* ---------- Lesson sidebar + previous / next ---------- */
+  var sidebarLinks = {};
   var sidebar = document.getElementById('sidebar');
   if (sidebar) {
     sidebar.className = 'sidebar';
     sidebar.appendChild(el('h4', { text: 'Lessons' }));
     sidebar.appendChild(el('ol', {}, lessons.map(function (lesson) {
-      return el('li', {}, [el('a', {
+      sidebarLinks[lesson.id] = el('a', {
         href: root + lesson.file,
         class: lesson.id === lessonId ? 'active' : '',
         text: lesson.title
-      })]);
+      });
+      return el('li', {}, [sidebarLinks[lesson.id]]);
     })));
   }
 
@@ -94,11 +105,13 @@
   }
 
   /* ---------- Home: lesson cards ---------- */
+  var cardTags = {};
   var lessonCards = document.getElementById('lesson-cards');
   if (lessonCards) {
     lessons.forEach(function (lesson, i) {
+      cardTags[lesson.id] = el('span', { class: 'tag', text: 'Lesson ' + (i + 1) });
       lessonCards.appendChild(el('a', { class: 'card', href: root + lesson.file }, [
-        el('span', { class: 'tag', text: 'Lesson ' + (i + 1) }),
+        cardTags[lesson.id],
         el('h3', { text: lesson.title }),
         el('p', { text: lesson.summary })
       ]));
@@ -132,4 +145,125 @@
 
   renderItems('assignment-list', window.ASSIGNMENTS, 'No assignments have been posted yet.');
   renderItems('tutorial-list', window.TUTORIALS, 'No tutorials have been posted yet.');
+
+  /* ---------- Student progress + lesson locking ---------- */
+  // Lesson pages start hidden (class "gated" on <body>) until we know the
+  // student may read them.
+  function openPage() {
+    document.body.classList.remove('gated');
+  }
+
+  function showMessage(className, children) {
+    if (header) header.parentNode.insertBefore(el('div', { class: className + ' page-message' }, children), header.nextSibling);
+  }
+
+  // A lesson is complete when the best quiz score reaches the KKM; only then
+  // does the next lesson open.
+  function renderProgress(session) {
+    var summary = Store.summarize(session.attempts);
+    var done = 0;
+    var lockedBy = null;
+    var nextUp = null;
+
+    lessons.forEach(function (lesson, i) {
+      var result = summary[lesson.id];
+      var before = lessons[i - 1];
+      var locked = !!before && !Store.passed(summary[before.id]);
+      var passed = Store.passed(result);
+      var label = result
+        ? result.best + '% · ' + (passed ? 'Complete' : 'Below KKM')
+        : (locked ? 'Locked' : 'Not started');
+      var state = result ? (passed ? 'good' : 'low') : (locked ? 'locked' : 'todo');
+      if (passed) done += 1;
+      else if (!nextUp && !locked) nextUp = { lesson: lesson, number: i + 1, result: result };
+      if (locked && lesson.id === lessonId) lockedBy = before;
+
+      var link = sidebarLinks[lesson.id];
+      if (link) {
+        var old = link.querySelector('.status');
+        if (old) link.removeChild(old);
+        link.appendChild(el('span', { class: 'status ' + state, text: result ? result.best + '%' : label }));
+      }
+      var tag = cardTags[lesson.id];
+      if (tag) {
+        tag.textContent = 'Lesson ' + (i + 1) + ' · ' + label;
+        tag.className = 'tag ' + state;
+        tag.parentNode.classList.toggle('locked', locked);
+      }
+    });
+
+    var progress = document.getElementById('progress-summary');
+    if (progress) progress.textContent = done + ' of ' + lessons.length + ' complete';
+
+    var next = document.getElementById('next-lesson');
+    if (next) {
+      next.textContent = '';
+      next.className = 'panel next-lesson';
+      if (!nextUp) {
+        next.appendChild(el('h2', { class: 'plain', text: 'All lessons complete' }));
+        next.appendChild(el('p', { text: 'Well done. You reached the KKM in every lesson.' }));
+      } else {
+        next.appendChild(el('span', { class: 'eyebrow', text: nextUp.result ? 'Finish this lesson' : 'Your next lesson' }));
+        next.appendChild(el('h2', { class: 'plain', text: 'Lesson ' + nextUp.number + ': ' + nextUp.lesson.title }));
+        next.appendChild(el('p', { text: nextUp.result
+          ? 'Your best quiz score is ' + nextUp.result.best + '%. You need ' + Store.KKM + '% to complete it. Read the lesson again, then retake the quiz.'
+          : nextUp.lesson.summary }));
+        next.appendChild(el('a', { class: 'btn', href: root + nextUp.lesson.file, text: nextUp.result ? 'Continue lesson' : 'Start lesson' }));
+      }
+    }
+    return lockedBy;
+  }
+
+  function start(session) {
+    var needsLogin = page === 'home' || page === 'lesson';
+
+    if (!session.configured) {
+      if (needsLogin) {
+        showMessage('warn', [el('p', { text: 'Progress tracking is not set up yet, so quiz results are not saved.' })]);
+      }
+      return openPage();
+    }
+
+    if (session.role === 'teacher') {
+      nav.appendChild(el('a', { href: root + 'admin.html', class: page === 'admin' ? 'active' : '', text: 'Dashboard' }));
+      userBox.appendChild(el('span', { text: 'Teacher preview' }));
+      return openPage();
+    }
+
+    if (session.role !== 'student') {
+      if (needsLogin) location.replace(root + 'login.html');
+      else if (page !== 'login' && page !== 'admin') userBox.appendChild(el('a', { href: root + 'login.html', text: 'Join your class' }));
+      return;
+    }
+
+    var switchButton = el('button', { class: 'link-button', type: 'button', text: 'Log out' });
+    switchButton.addEventListener('click', function () {
+      Store.leave().then(function () { location.href = root + 'login.html'; });
+    });
+    userBox.appendChild(el('span', { text: session.student.name + ' · ' + session.student.className }));
+    userBox.appendChild(switchButton);
+
+    var lockedBy = renderProgress(session);
+    if (page === 'lesson' && lockedBy) {
+      var content = document.querySelector('main.content');
+      content.parentNode.insertBefore(el('main', { class: 'content lock-notice' }, [
+        el('h1', { text: 'This lesson is locked' }),
+        el('p', { class: 'lead', text: 'Score at least ' + Store.KKM + '% in the quiz of "' + lockedBy.title + '" first.' }),
+        el('a', { class: 'btn', href: root + lockedBy.file, text: 'Go to ' + lockedBy.title })
+      ]), content);
+      return;
+    }
+    openPage();
+  }
+
+  if (Store) {
+    Array.prototype.forEach.call(document.querySelectorAll('.kkm'), function (node) {
+      node.textContent = Store.KKM;
+    });
+  }
+
+  window.App = { el: el, root: root, renderProgress: renderProgress };
+
+  if (Store) Store.ready().then(start);
+  else openPage();
 })();

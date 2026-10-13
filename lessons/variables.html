@@ -6,7 +6,7 @@
   <title>Variables · App Inventor Class Notes</title>
   <link rel="stylesheet" href="../assets/style.css">
 </head>
-<body data-root="../" data-page="lesson" data-lesson="variables">
+<body class="gated" data-root="../" data-page="lesson" data-lesson="variables">
   <header id="site-header"></header>
 
   <div class="page with-sidebar">
@@ -183,23 +183,7 @@
         </ul>
       </div>
 
-      <h2>Check your understanding</h2>
-      <details>
-        <summary>1. What is the difference between <code>get</code> and <code>set</code>?</summary>
-        <p><code>get</code> only reads the value. <code>set</code> replaces the value with a new one.</p>
-      </details>
-      <details>
-        <summary>2. <code>score</code> is 5. The app runs <code>set score to score + 2</code> two times. What is the value now?</summary>
-        <p>9. First 5 + 2 = 7, then 7 + 2 = 9.</p>
-      </details>
-      <details>
-        <summary>3. You need the player's score on every button of the screen. Global or local?</summary>
-        <p>Global, because many different events need to use it.</p>
-      </details>
-      <details>
-        <summary>4. Which type of value would you use to store whether the sound is on or off?</summary>
-        <p>A boolean: <code>true</code> for on and <code>false</code> for off.</p>
-      </details>
+      <section id="quiz"></section>
 
       <h2>Try it yourself</h2>
       <ol>
@@ -214,7 +198,14 @@
 
   <footer class="site-footer">Grade 10 · MIT App Inventor</footer>
 
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="../assets/firebase-config.js"></script>
   <script src="../data/lessons.js"></script>
+  <script src="../data/quizzes.js"></script>
+  <script src="../assets/store.js"></script>
   <script src="../assets/app.js"></script>
+  <script src="../assets/quiz.js"></script>
 </body>
 </html>

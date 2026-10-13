@@ -1,0 +1,112 @@
+rules_version = '2';
+
+// Paste this file into Firebase console → Firestore Database → Rules → Publish.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    // A teacher is a Google account whose email has a document in /admins.
+    function isAdmin() {
+      return signedIn()
+        && 'email' in request.auth.token
+        && request.auth.token.email_verified == true
+        && exists(/databases/$(database)/documents/admins/$(request.auth.token.email));
+    }
+
+    function isMember() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/members/$(request.auth.uid));
+    }
+
+    function member() {
+      return get(/databases/$(database)/documents/members/$(request.auth.uid)).data;
+    }
+
+    // Created by hand in the console. A user may only check their own email.
+    match /admins/{email} {
+      allow get: if signedIn()
+        && 'email' in request.auth.token
+        && request.auth.token.email == email;
+    }
+
+    // Class names are needed for the "choose your class" list.
+    match /classes/{classId} {
+      allow read: if signedIn();
+      allow write: if isAdmin();
+
+      // The roster is only visible after the class code was accepted.
+      match /students/{studentId} {
+        allow read: if isAdmin() || (isMember() && member().classId == classId);
+        allow write: if isAdmin();
+      }
+
+      // Student passwords (hashed). Nobody but the teacher can read them.
+      // A class member may set the password of a name that has none yet;
+      // only the teacher can remove it again ("Reset password").
+      match /pins/{studentId} {
+        allow read, delete: if isAdmin();
+        allow create: if isMember()
+          && member().classId == classId
+          && exists(/databases/$(database)/documents/classes/$(classId)/students/$(studentId))
+          && request.resource.data.keys().hasOnly(['hash'])
+          && request.resource.data.hash is string
+          && request.resource.data.hash.size() == 64;
+      }
+
+      // Marks which names already have a password, so the login page knows
+      // whether to ask for a new password or an existing one.
+      match /claimed/{studentId} {
+        allow read: if isAdmin() || (isMember() && member().classId == classId);
+        allow create: if isMember()
+          && member().classId == classId
+          && existsAfter(/databases/$(database)/documents/classes/$(classId)/pins/$(studentId));
+        allow delete: if isAdmin();
+      }
+    }
+
+    // Join codes. Students can never read these; the rule below compares for them.
+    match /classSecrets/{classId} {
+      allow read, write: if isAdmin();
+    }
+
+    // One document per browser: which class and which student it joined as.
+    // Choosing a name only works with that student's password.
+    match /members/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || isAdmin());
+      allow delete: if signedIn() && request.auth.uid == uid;
+      allow create, update: if signedIn()
+        && request.auth.uid == uid
+        && request.resource.data.classId is string
+        && request.resource.data.code ==
+           get(/databases/$(database)/documents/classSecrets/$(request.resource.data.classId)).data.code
+        && (!('studentId' in request.resource.data)
+            || (exists(/databases/$(database)/documents/classes/$(request.resource.data.classId)/students/$(request.resource.data.studentId))
+                && request.resource.data.hash ==
+                   get(/databases/$(database)/documents/classes/$(request.resource.data.classId)/pins/$(request.resource.data.studentId)).data.hash));
+    }
+
+    // Quiz attempts are write-once: students cannot edit or delete them.
+    match /attempts/{attemptId} {
+      allow create: if isMember()
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.classId == member().classId
+        && request.resource.data.studentId == member().studentId
+        // Stops working as soon as the teacher resets this student's password.
+        && member().hash ==
+           get(/databases/$(database)/documents/classes/$(member().classId)/pins/$(member().studentId)).data.hash
+        && request.resource.data.lessonId is string
+        && request.resource.data.answers is list
+        && request.resource.data.createdAt == request.time;
+      allow read: if isAdmin()
+        || (isMember()
+            && resource.data.classId == member().classId
+            && resource.data.studentId == member().studentId
+            && member().hash ==
+               get(/databases/$(database)/documents/classes/$(member().classId)/pins/$(member().studentId)).data.hash);
+      allow delete: if isAdmin();
+    }
+  }
+}

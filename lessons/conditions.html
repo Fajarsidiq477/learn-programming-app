@@ -3,18 +3,18 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>If – Else · App Inventor Class Notes</title>
+  <title>Conditions · App Inventor Class Notes</title>
   <link rel="stylesheet" href="../assets/style.css">
 </head>
-<body data-root="../" data-page="lesson" data-lesson="if-else">
+<body class="gated" data-root="../" data-page="lesson" data-lesson="conditions">
   <header id="site-header"></header>
 
   <div class="page with-sidebar">
     <aside id="sidebar"></aside>
 
     <main class="content">
-      <h1>If – Else</h1>
-      <p class="lead">If – else is how your app <strong>makes a decision</strong>.</p>
+      <h1>Conditions</h1>
+      <p class="lead">Conditions and <code>if – else</code> are how your app <strong>makes decisions</strong>.</p>
 
       <h2>What is a decision?</h2>
       <p>You make decisions all day: <em>“<strong>If</strong> it is raining, I bring an umbrella.
@@ -178,23 +178,7 @@
         </ul>
       </div>
 
-      <h2>Check your understanding</h2>
-      <details>
-        <summary>1. What kind of value does a condition give?</summary>
-        <p>A boolean: <code>true</code> or <code>false</code>.</p>
-      </details>
-      <details>
-        <summary>2. In an <code>if – then – else</code> block, can both parts run in the same click?</summary>
-        <p>No. Exactly one part runs: <code>then</code> when the condition is true, <code>else</code> when it is false.</p>
-      </details>
-      <details>
-        <summary>3. <code>age</code> is 15. Is <code>age ≥ 13 and age &lt; 15</code> true or false?</summary>
-        <p>False. 15 ≥ 13 is true, but 15 &lt; 15 is false, and <code>and</code> needs both sides to be true.</p>
-      </details>
-      <details>
-        <summary>4. Using the grade example above, what grade does a score of 75 get?</summary>
-        <p>B. 75 ≥ 90 is false, then 75 ≥ 75 is true.</p>
-      </details>
+      <section id="quiz"></section>
 
       <h2>Try it yourself</h2>
       <ol>
@@ -211,7 +195,14 @@
 
   <footer class="site-footer">Grade 10 · MIT App Inventor</footer>
 
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="../assets/firebase-config.js"></script>
   <script src="../data/lessons.js"></script>
+  <script src="../data/quizzes.js"></script>
+  <script src="../assets/store.js"></script>
   <script src="../assets/app.js"></script>
+  <script src="../assets/quiz.js"></script>
 </body>
 </html>
